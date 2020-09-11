@@ -11,6 +11,7 @@ options = Options()
 options.add_argument('disable-infobars')
 options.add_argument("--disable-extensions")
 
+'Dados do Login'
 info = {}
 try:
     manipulador = open('config.txt', 'r', encoding ='utf-8')
@@ -23,33 +24,50 @@ except FileNotFoundError:
     print('O arquivo de configuração não foi encontrado.')
     input()
     
+
+'Configuracao do Driver'
 driver = webdriver.Chrome(executable_path=ChromeDriverManager().install(),chrome_options=options)
 driver.get('https://www.nike.com.br')
 WebDriverWait(driver,30).until(EC.element_to_be_clickable((By.ID,'anchor-acessar'))).click()
 driver.maximize_window()
 
+
+'Formulario de Login'
 def login_form(driver):
     email = driver.find_element_by_name("emailAddress")
     senha = driver.find_element_by_name("password")
     return [email ,senha]
 [email , senha ] = WebDriverWait(driver,30).until(login_form)
-time.sleep(2)
+time.sleep(0.7)
+
+
+'Login Usuario'
 driver.execute_script("arguments[0].setAttribute('value','{}')".format(info['email']),email)
 driver.execute_script("arguments[0].setAttribute('value','{}')".format(info['senha']),senha)
 WebDriverWait(driver,20).until(EC.element_to_be_clickable((By.XPATH,"/html/body/div[9]/div/div/div[2]/div[5]/form/div[4]/label"))).click()
 WebDriverWait(driver,20).until(EC.element_to_be_clickable((By.XPATH,'/html/body/div[9]/div/div/div[2]/div[5]/form/div[6]/input'))).click()
 time.sleep(5.7)
+
+'Redirecionamento para Pagina do Produto'
 driver.get('https://www.nike.com.br/Snkrs/Produto/{}'.format(info['model']))
+
+'Configuracao da Compra'
 driver.execute_script('window.scrollTo(0,300)')
 time.sleep(0.5)
 WebDriverWait(driver,20).until(EC.element_to_be_clickable((By.XPATH,"//label[contains(text(),'{}')]".format(info['sizeM'])))).click()
 time.sleep(0.1)
 WebDriverWait(driver,20).until(EC.element_to_be_clickable((By.XPATH,"/html/body/main/div/div[1]/div[3]/div/div[2]/div[4]/div/div[2]/button[1]"))).click()
-'''WebDriverWait(driver,20).until(EC.element_to_be_clickable((By.XPATH,"/html/body/main/div[4]/div/div[1]/div[1]/div[2]/div[2]/label"))).click()'''
+
+'Confirmacao da Compra'
+' Selecao de Frete WebDriverWait(driver,20).until(EC.element_to_be_clickable((By.XPATH,"/html/body/main/div[4]/div/div[1]/div[1]/div[2]/div[2]/label"))).click()'
+
+'Usar frete Padrao e selecionar Endereco'
 WebDriverWait(driver,20).until(EC.element_to_be_clickable((By.XPATH,"/html/body/main/div[4]/div/div[4]/a"))).click()
 time.sleep(0.5)
 WebDriverWait(driver,20).until(EC.element_to_be_clickable((By.XPATH,"/html/body/main/div/div[3]/div[4]/div[5]/button"))).click()
 time.sleep(0.7)
+
+'Tentativa de clicar nas Diferentes divs de Confirmar Endereco'
 try:
     WebDriverWait(driver,2).until(EC.element_to_be_clickable((By.XPATH,"/html/body/div[13]/div/div/div[3]/button[1]"))).click()
 except TimeoutException as exception:
@@ -59,10 +77,16 @@ except TimeoutException as exception:
         WebDriverWait(driver,2).until(EC.element_to_be_clickable((By.XPATH,"/html/body/div[12]/div/div/div[3]/button[1]"))).click()
 driver.execute_script('window.scrollTo(0,200)')
 time.sleep(0.6)
+
+'Aceitar Politica de Trocas'
 WebDriverWait(driver,5).until(EC.element_to_be_clickable((By.ID,"politica-trocas-label"))).click()
 'WebDriverWait(driver,10).until(EC.element_to_be_clickable((By.XPATH,"/html/body/div[13]/div/div/div[3]/button"))).click()'
+
+'Confirmar Pagamento'
 WebDriverWait(driver,5).until(EC.element_to_be_clickable((By.ID,"confirmar-pagamento"))).click()
 time.sleep(6)
+
+'Gerar comprovante da Compra'
 driver.save_screenshot('Comprovantes/{}_Comprovante.png'.format(info['model'].split('/')[0]))
 driver.quit()
 print('Sucesso , verifique a pasta Comprovantes.')
