@@ -5,6 +5,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from webdriver_manager.chrome import ChromeDriverManager
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.common.action_chains import ActionChains 
 from time import time, sleep , mktime 
 import schedule
 
@@ -86,11 +87,13 @@ def Buy(driver,info):
                     print('Termine a Compra de forma Manual')
             
     driver.execute_script('window.scrollTo(0,200)')
-    sleep(0.6)
+    sleep(1.5)
 
     'Aceitar Politica de Trocas'
-    WebDriverWait(driver,5).until(EC.element_to_be_clickable((By.ID,"politica-trocas"))).click()
+    'WebDriverWait(driver,5).until(EC.element_located_to_be_selected((By.ID,"politica-trocas"))).click()'
     'WebDriverWait(driver,10).until(EC.element_to_be_clickable((By.XPATH,"/html/body/div[13]/div/div/div[3]/button"))).click()'
+    ActionChains(driver).move_to_element(driver.find_elements_by_class_name('custom-checkbox')[3]).click()
+    
 
     'Confirmar Pagamento'
     WebDriverWait(driver,5).until(EC.element_to_be_clickable((By.ID,"confirmar-pagamento"))).click()
@@ -101,8 +104,9 @@ def Buy(driver,info):
     driver.quit()
     print('Sucesso , verifique a pasta Comprovantes.')
     input()
+    print('\x03')
 
-schedule.every().day.at("04:10").do(lambda: Buy(driver,info))
+schedule.every().day.at("17:32").do(lambda: Buy(driver,info))
 try:
     while True:
         schedule.run_pending()
