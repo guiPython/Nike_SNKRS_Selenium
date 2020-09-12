@@ -5,8 +5,8 @@ from selenium.webdriver.support.ui import WebDriverWait
 from webdriver_manager.chrome import ChromeDriverManager
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.chrome.options import Options
-from time import time, sleep , mktime
-from sched import scheduler
+from time import time, sleep , mktime 
+import schedule
 
 options = Options()
 options.add_argument('disable-infobars')
@@ -27,7 +27,7 @@ except FileNotFoundError:
     
 
 'Configuracao do Driver'
-driver = webdriver.Chrome(executable_path=ChromeDriverManager().install(),chrome_options=options)
+driver = webdriver.Chrome(executable_path=ChromeDriverManager().install(),options=options)
 driver.get('https://www.nike.com.br')
 WebDriverWait(driver,30).until(EC.element_to_be_clickable((By.ID,'anchor-acessar'))).click()
 driver.maximize_window()
@@ -65,23 +65,31 @@ def Buy(driver,info):
 
     'Usar frete Padrao e selecionar Endereco'
     WebDriverWait(driver,20).until(EC.element_to_be_clickable((By.XPATH,"/html/body/main/div[4]/div/div[4]/a"))).click()
-    time.sleep(0.5)
+    sleep(0.5)
     WebDriverWait(driver,20).until(EC.element_to_be_clickable((By.XPATH,"/html/body/main/div/div[3]/div[4]/div[5]/button"))).click()
     sleep(0.7)
 
     'Tentativa de clicar nas Diferentes divs de Confirmar Endereco'
     try:
-        WebDriverWait(driver,2).until(EC.element_to_be_clickable((By.XPATH,"/html/body/div[13]/div/div/div[3]/button[1]"))).click()
+        WebDriverWait(driver,1.8).until(EC.element_to_be_clickable((By.XPATH,"/html/body/div[13]/div/div/div[3]/button[1]"))).click()
     except TimeoutException as exception:
         try:
-            WebDriverWait(driver,2).until(EC.element_to_be_clickable((By.XPATH,"/html/body/div[15]/div/div/div[3]/button[1]"))).click()
+            WebDriverWait(driver,1.8).until(EC.element_to_be_clickable((By.XPATH,"/html/body/div[15]/div/div/div[3]/button[1]"))).click()
         except TimeoutException as exception:
-            WebDriverWait(driver,2).until(EC.element_to_be_clickable((By.XPATH,"/html/body/div[12]/div/div/div[3]/button[1]"))).click()
+            WebDriverWait(driver,1.8).until(EC.element_to_be_clickable((By.XPATH,"/html/body/div[12]/div/div/div[3]/button[1]"))).click()
+            try:
+                WebDriverWait(driver,1.8).until(EC.element_to_be_clickable((By.XPATH,"/html/body/main/div/div[3]/div[4]/div[5]/button"))).click()
+            except TimeoutException as exception:
+                try:
+                    WebDriverWait(driver,1.8).until(EC.element_to_be_clickable((By.XPATH,"/html/body/div[14]/div/div/div[3]/button[1]"))).click()
+                except TimeoutException as exception:
+                    print('Termine a Compra de forma Manual')
+            
     driver.execute_script('window.scrollTo(0,200)')
     sleep(0.6)
 
     'Aceitar Politica de Trocas'
-    WebDriverWait(driver,5).until(EC.element_to_be_clickable((By.ID,"politica-trocas-label"))).click()
+    WebDriverWait(driver,5).until(EC.element_to_be_clickable((By.ID,"politica-trocas"))).click()
     'WebDriverWait(driver,10).until(EC.element_to_be_clickable((By.XPATH,"/html/body/div[13]/div/div/div[3]/button"))).click()'
 
     'Confirmar Pagamento'
@@ -94,9 +102,10 @@ def Buy(driver,info):
     print('Sucesso , verifique a pasta Comprovantes.')
     input()
 
-timetuple = (2020, 9, 12, 9, 2, 38, 0, 0, 0)
-timestamp = mktime(timetuple)
-sch = scheduler(timefunc=time, delayfunc=sleep)
-sch.enterabs(timestamp, 0, Buy, ())
-
-sch.run()
+schedule.every().day.at("04:10").do(lambda: Buy(driver,info))
+try:
+    while True:
+        schedule.run_pending()
+        sleep(1)
+except KeyboardInterrupt:
+    print('Agradecemos...')
