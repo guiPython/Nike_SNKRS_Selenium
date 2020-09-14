@@ -51,6 +51,7 @@ WebDriverWait(driver,20).until(EC.element_to_be_clickable((By.XPATH,'/html/body/
 sleep(5.7)
 
 def Buy(driver,info):
+    time_start = time()
     'Redirecionamento para Pagina do Produto'
     driver.get('https://www.nike.com.br/Snkrs/Produto/{}'.format(info['model']))
 
@@ -68,47 +69,50 @@ def Buy(driver,info):
     WebDriverWait(driver,20).until(EC.element_to_be_clickable((By.XPATH,"/html/body/main/div[4]/div/div[4]/a"))).click()
     sleep(0.5)
     WebDriverWait(driver,20).until(EC.element_to_be_clickable((By.XPATH,"/html/body/main/div/div[3]/div[4]/div[5]/button"))).click()
-    sleep(0.7)
+    sleep(1.2)
 
     'Tentativa de clicar nas Diferentes divs de Confirmar Endereco'
     try:
-        WebDriverWait(driver,1.8).until(EC.element_to_be_clickable((By.XPATH,"/html/body/div[13]/div/div/div[3]/button[1]"))).click()
+        WebDriverWait(driver,2).until(EC.element_to_be_clickable((By.XPATH,"/html/body/div[13]/div/div/div[3]/button[1]"))).click()
     except TimeoutException as exception:
         try:
-            WebDriverWait(driver,1.8).until(EC.element_to_be_clickable((By.XPATH,"/html/body/div[15]/div/div/div[3]/button[1]"))).click()
+            WebDriverWait(driver,2).until(EC.element_to_be_clickable((By.XPATH,"/html/body/div[15]/div/div/div[3]/button[1]"))).click()
         except TimeoutException as exception:
-            WebDriverWait(driver,1.8).until(EC.element_to_be_clickable((By.XPATH,"/html/body/div[12]/div/div/div[3]/button[1]"))).click()
+            WebDriverWait(driver,2).until(EC.element_to_be_clickable((By.XPATH,"/html/body/div[12]/div/div/div[3]/button[1]"))).click()
             try:
-                WebDriverWait(driver,1.8).until(EC.element_to_be_clickable((By.XPATH,"/html/body/main/div/div[3]/div[4]/div[5]/button"))).click()
+                WebDriverWait(driver,2).until(EC.element_to_be_clickable((By.XPATH,"/html/body/main/div/div[3]/div[4]/div[5]/button"))).click()
             except TimeoutException as exception:
                 try:
-                    WebDriverWait(driver,1.8).until(EC.element_to_be_clickable((By.XPATH,"/html/body/div[14]/div/div/div[3]/button[1]"))).click()
+                    WebDriverWait(driver,2).until(EC.element_to_be_clickable((By.XPATH,"/html/body/div[14]/div/div/div[3]/button[1]"))).click()
                 except TimeoutException as exception:
                     print('Termine a Compra de forma Manual')
             
     driver.execute_script('window.scrollTo(0,200)')
-    sleep(1.5)
+    sleep(1)
 
     'Aceitar Politica de Trocas'
     'WebDriverWait(driver,5).until(EC.element_located_to_be_selected((By.ID,"politica-trocas"))).click()'
     'WebDriverWait(driver,10).until(EC.element_to_be_clickable((By.XPATH,"/html/body/div[13]/div/div/div[3]/button"))).click()'
-    ActionChains(driver).move_to_element(driver.find_elements_by_class_name('custom-checkbox')[3]).click()
+    ActionChains(driver).move_to_element(driver.find_element_by_id('politica-trocas-label')).move_by_offset(137.3,0).click().perform()
     
 
     'Confirmar Pagamento'
     WebDriverWait(driver,5).until(EC.element_to_be_clickable((By.ID,"confirmar-pagamento"))).click()
+    time_stop = time()
+    print('A compra foi feita em {}s'.format(time_stop - time_start))
     sleep(6)
 
     'Gerar comprovante da Compra'
     driver.save_screenshot('Comprovantes/{}_Comprovante.png'.format(info['model'].split('/')[0]))
     driver.quit()
     print('Sucesso , verifique a pasta Comprovantes.')
-    input()
-    print('\x03')
+    c_ex = False
+    
 
-schedule.every().day.at("17:32").do(lambda: Buy(driver,info))
+schedule.every().day.at("16:35").do(lambda: Buy(driver,info))
+c_ex = True
 try:
-    while True:
+    while c_ex:
         schedule.run_pending()
         sleep(1)
 except KeyboardInterrupt:
