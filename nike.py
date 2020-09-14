@@ -91,8 +91,6 @@ def Buy(driver,info):
     sleep(1)
 
     'Aceitar Politica de Trocas'
-    'WebDriverWait(driver,5).until(EC.element_located_to_be_selected((By.ID,"politica-trocas"))).click()'
-    'WebDriverWait(driver,10).until(EC.element_to_be_clickable((By.XPATH,"/html/body/div[13]/div/div/div[3]/button"))).click()'
     ActionChains(driver).move_to_element(driver.find_element_by_id('politica-trocas-label')).move_by_offset(137.3,0).click().perform()
     
 
