@@ -1,5 +1,5 @@
-email:guirox.wd@gmail.com
-senha:Lask1234
+email:
+senha:
 model:ACG-Air-Deschutz/153-169-211-261194
 sizeM:42
 Timer:
