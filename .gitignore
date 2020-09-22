@@ -1,3 +1,4 @@
 *.log
+geckodriver.log
 /Comprovantes
 teste.py
