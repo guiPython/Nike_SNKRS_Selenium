@@ -1,2 +1,2 @@
-# Python_Selenium 
-Bot criado para compra automatizad de tenis Nike SNKRS.
+# Python-Selenium-Nike-SNKRS
+Bot criado com python e selenium para automatizar compras de tenis em Nike SNKRS.
