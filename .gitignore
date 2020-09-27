@@ -2,3 +2,5 @@
 geckodriver.log
 /Comprovantes
 teste.py
+/dist
+/build

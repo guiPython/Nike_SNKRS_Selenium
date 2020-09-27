@@ -2,11 +2,11 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
-#from webdriver_manager.chrome import ChromeDriverManager
-from webdriver_manager.firefox import GeckoDriverManager
+from webdriver_manager.chrome import ChromeDriverManager
+#from webdriver_manager.firefox import GeckoDriverManager
 from selenium.common.exceptions import TimeoutException
-#from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.firefox.options import Options
+from selenium.webdriver.chrome.options import Options
+#from selenium.webdriver.firefox.options import Options
 from selenium.webdriver.common.action_chains import ActionChains 
 from time import time, sleep , mktime 
 import schedule
@@ -31,8 +31,8 @@ except FileNotFoundError:
     
 
 'Configuracao do Driver'
-#driver = webdriver.Chrome(executable_path=ChromeDriverManager().install(),options=options)
-driver = webdriver.Firefox(executable_path=GeckoDriverManager().install(),firefox_options=options)
+driver = webdriver.Chrome(executable_path=ChromeDriverManager().install(),options=options)
+#driver = webdriver.Firefox(executable_path=ChromeDriverManager().install(),chrome_options=options)
 driver.get('https://www.nike.com.br')
 WebDriverWait(driver,30).until(EC.element_to_be_clickable((By.ID,'anchor-acessar'))).click()
 driver.maximize_window()
